@@ -1,3 +1,5 @@
+
+
 table 50004 PostedSeminarRegHeader
 {
     Caption = 'Posted Seminar Reg. Header';
@@ -12,7 +14,7 @@ table 50004 PostedSeminarRegHeader
             Caption = 'No.';
             DataClassification = CustomerContent;
         }
-        field(2; "Starting Date"; Date)
+        field(2; "Starting Date"; DateTime)
         {
             Caption = 'Starting Date';
             DataClassification = CustomerContent;
@@ -28,9 +30,9 @@ table 50004 PostedSeminarRegHeader
             Caption = 'Seminar Name';
             DataClassification = CustomerContent;
         }
-        field(5; "Instructor Code."; Code[20])
+        field(5; "Instructor Resource No."; Code[20])
         {
-            Caption = 'Instructor Code No.';
+            Caption = 'Instructor Resource No.';
             DataClassification = CustomerContent;
             TableRelation = Resource where(Type = const(Person));
         }
@@ -39,7 +41,7 @@ table 50004 PostedSeminarRegHeader
             Caption = 'Instructor Name';
             DataClassification = CustomerContent;
         }
-        field(7; Status; Enum SeminarRegistrationStatus)
+        field(7; Approval_Status; Enum SeminarRegistrationStatus)
         {
             Caption = 'Status';
             DataClassification = CustomerContent;
@@ -59,12 +61,11 @@ table 50004 PostedSeminarRegHeader
             Caption = 'Minimum Participants';
             DataClassification = CustomerContent;
         }
-        field(11; "Room Code."; Code[20])
+        field(11; "Room Resource No."; Code[20])
         {
             Caption = 'Room Resource No.';
             DataClassification = CustomerContent;
-            TableRelation = "Seminar Room";
-            // TableRelation = Resource where(Type = const(Room));
+            TableRelation = Resource where(Type = const(Machine));
 
         }
         field(12; "Room Name"; Text[100])
@@ -173,10 +174,40 @@ table 50004 PostedSeminarRegHeader
             DataClassification = CustomerContent;
             TableRelation = "Source Code";
         }
-        field(31; "Job No."; Code[20])
+        field(40; Status; Enum ApprovalStatus)
+        {
+            Caption = 'Approval Status';
+
+        }
+        field(41; No_Printed; Integer)
+        {
+            DataClassification = ToBeClassified;
+            Editable = false;
+        }
+        field(42; "Total Amount"; Decimal)
+        {
+            Editable = false;
+            DecimalPlaces = 0 : 5;
+            FieldClass = FlowField;
+            CalcFormula = sum(PostedSeminarRegLine.Amount where("Document No." = field("No.")));
+        }
+        field(43; "Line Discount"; Decimal)
+        {
+            FieldClass = FlowField;
+            Editable = false;
+            CalcFormula = sum(PostedSeminarRegLine."Line Discount Amount" where("Document No." = field("No.")));
+        }
+        field(44; "Number of Lines"; Integer)
+        {
+            Editable = false;
+            CalcFormula = count(PostedSeminarRegLine where("Document No." = field("No.")));
+            FieldClass = FlowField;
+
+        }
+        field(45; "End Time"; DateTime)
         {
             DataClassification = CustomerContent;
-            TableRelation = "Job";
+
         }
     }
     keys
@@ -185,7 +216,7 @@ table 50004 PostedSeminarRegHeader
         {
             Clustered = true;
         }
-        key(Index2; "Room Code.")
+        key(Index2; "Room Resource No.")
         {
             SumIndexFields = Duration;
         }

@@ -1,4 +1,4 @@
-tableextension 50002 JobLedgerEntry extends "Job Ledger Entry"
+tableextension 50002 ResLedgerEntry extends "Res. Ledger Entry"
 {
     fields
     {

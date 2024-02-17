@@ -3,28 +3,23 @@ codeunit 50001 SeminarPost
     TableNo = SeminarRegistrationHeader;
 
     VAR
-        SeminarRegHeader: Record SeminarRegistrationHeader;
-        SeminarRegLine: Record SeminarRegistrationLine;
+        SeminarRegHeader: Record "SeminarRegistrationHeader";
+        SeminarRegLine: Record "SeminarRegistrationLine";
         PstdSeminarRegHeader: Record PostedSeminarRegHeader;
         PstdSeminarRegLine: Record PostedSeminarRegLine;
-        SeminarCommentLine: Record SeminarCommentLine;
-        SeminarCommentLine2: Record SeminarCommentLine;
-        SeminarCharge: Record SeminarCharge;
+        SeminarCommentLine: Record "SeminarCommentLine";
+        SeminarCommentLine2: Record "SeminarCommentLine";
+        SeminarCharge: Record "SeminarCharge";
         PstdSeminarCharge: Record PostedSeminarCharge;
-        Room: Record "Seminar Room";
-        Instructor: Record Instructor;
-        Job: Record Job;
-        Res: Record Resource;
+        Room: Record Resource;
+        Instructor: Record Resource;
         Customer: Record Customer;
-        // ResLedgEntry: Record "Res. Ledger Entry";
-        JobLedgEntry: Record "Job Ledger Entry";
+        ResLedgEntry: Record "Res. Ledger Entry";
         SeminarJnlLine: Record SeminarJournalLine;
         SourceCodeSetup: Record "Source Code Setup";
-        JObJnlLine: Record "Job Journal Line";
-        // JobJnlPostLine: Codeunit SeminarJnlPostLine;
+        ResJnlLine: Record "Res. Journal Line";
         SeminarJnlPostLine: Codeunit SeminarJnlPostLine;
-        // ResJnlPostLine: Codeunit "Res. Jnl.-Post Line";
-        JobJnlPostLine: Codeunit "Job Jnl.-Post Line";
+        ResJnlPostLine: Codeunit "Res. Jnl.-Post Line";
         NoSeriesMgt: Codeunit NoSeriesManagement;
         DimMgt: Codeunit DimensionManagement;
         Window: Dialog;
@@ -47,9 +42,10 @@ codeunit 50001 SeminarPost
         SeminarRegHeader.TESTFIELD("Document Date");
         SeminarRegHeader.TESTFIELD("Seminar No.");
         SeminarRegHeader.TESTFIELD(Duration);
-        SeminarRegHeader.TESTFIELD("Instructor Code");
-        SeminarRegHeader.TESTFIELD("Room Code");
-        SeminarRegHeader.TESTFIELD(Status, SeminarRegHeader.Status::Closed);
+        SeminarRegHeader.TESTFIELD("Instructor Resource No.");
+        SeminarRegHeader.TESTFIELD("Room Resource No.");
+        SeminarRegHeader.TESTFIELD(Approval_Status, SeminarRegHeader.Approval_Status::Closed);
+        SeminarRegHeader.TestField(Status, SeminarRegHeader.Status::Approved);
 
         SeminarRegLine.RESET;
         SeminarRegLine.SETRANGE("Document No.", Rec."No.");
@@ -141,8 +137,8 @@ codeunit 50001 SeminarPost
     end;
 
     LOCAL PROCEDURE CopyCommentLines(
-        FromDocumentType: Enum SeminarCommentLineDocumentType;
-        ToDocumentType: Enum SeminarCommentLineDocumentType;
+        FromDocumentType: Enum "SeminarCommentLineDocumentType";
+        ToDocumentType: Enum "SeminarCommentLineDocumentType";
         FromNumber: Code[20]; ToNumber: Code[20])
     BEGIN
         SeminarCommentLine.RESET;
@@ -171,34 +167,34 @@ codeunit 50001 SeminarPost
         END;
     END;
 
-    LOCAL PROCEDURE PostJobJnlLine(Job: Record Job): Integer
+    LOCAL PROCEDURE PostResJnlLine(Resource: Record Resource): Integer
     BEGIN
-        // Job.TESTFIELD("Quantity Per Day");
-        JobJnlLine.INIT;
-        JobJnlLine."Entry Type" := JobJnlLine."Entry Type"::Usage;
-        JobJnlLine."Document No." := PstdSeminarRegHeader."No.";
-        // JobJnlLine."Seminar No." := Job."No.";
-        JobJnlLine."Posting Date" := SeminarRegHeader."Posting Date";
-        JobJnlLine."Reason Code" := SeminarRegHeader."Reason Code";
-        JobJnlLine.Description := SeminarRegHeader."Seminar Name";
-        JobJnlLine."Gen. Prod. Posting Group" := SeminarRegHeader."Gen. Prod. Posting Group";
-        JobJnlLine."Posting No. Series" := SeminarRegHeader."Posting No. Series";
-        JobJnlLine."Source Code" := SourceCode;
-        // JobJnlLine."Resource No." := Job."No.";
-        // JobJnlLine."Unit of Measure Code" := Resource."Base Unit of Measure";
-        // JobJnlLine."Unit Cost" := Resource."Unit Cost";
-        JobJnlLine."Qty. per Unit of Measure" := 1;
-        // JobJnlLine.Quantity := SeminarRegHeader.Duration * Resource."Quantity Per Day";
-        JobJnlLine."Total Cost" := JobJnlLine."Unit Cost" * JobJnlLine.Quantity;
-        JobJnlLine."Seminar Registration No." := SeminarRegHeader."Seminar No.";
-        JobJnlLine."Seminar Registration No." := PstdSeminarRegHeader."No.";
-        JobJnlPostLine.RunWithCheck(JobJnlLine);
+        //Resource.TESTFIELD("Quantity Per Day");
+        ResJnlLine.INIT;
+        ResJnlLine."Entry Type" := ResJnlLine."Entry Type"::Usage;
+        ResJnlLine."Document No." := PstdSeminarRegHeader."No.";
+        ResJnlLine."Resource No." := Resource."No.";
+        ResJnlLine."Posting Date" := SeminarRegHeader."Posting Date";
+        ResJnlLine."Reason Code" := SeminarRegHeader."Reason Code";
+        ResJnlLine.Description := SeminarRegHeader."Seminar Name";
+        ResJnlLine."Gen. Prod. Posting Group" := SeminarRegHeader."Gen. Prod. Posting Group";
+        ResJnlLine."Posting No. Series" := SeminarRegHeader."Posting No. Series";
+        ResJnlLine."Source Code" := SourceCode;
+        ResJnlLine."Resource No." := Resource."No.";
+        ResJnlLine."Unit of Measure Code" := Resource."Base Unit of Measure";
+        ResJnlLine."Unit Cost" := Resource."Unit Cost";
+        ResJnlLine."Qty. per Unit of Measure" := 1;
+        //ResJnlLine.Quantity := SeminarRegHeader.Duration * Resource."Quantity Per Day";
+        ResJnlLine."Total Cost" := ResJnlLine."Unit Cost" * ResJnlLine.Quantity;
+        ResJnlLine."Seminar No." := SeminarRegHeader."Seminar No.";
+        ResJnlLine."Seminar Registration No." := PstdSeminarRegHeader."No.";
+        ResJnlPostLine.RunWithCheck(ResJnlLine);
 
-        JobLedgEntry.FINDLAST;
-        EXIT(JobLedgEntry."Entry No.");
+        ResLedgEntry.FINDLAST;
+        EXIT(ResLedgEntry."Entry No.");
     END;
 
-    LOCAL PROCEDURE PostSeminarJnlLine(ChargeType: Enum SeminarJournalChargeType)
+    LOCAL PROCEDURE PostSeminarJnlLine(ChargeType: Enum "SeminarJournalChargeType")
     BEGIN
         SeminarJnlLine.INIT;
         SeminarJnlLine."Seminar No." := SeminarRegHeader."Seminar No.";
@@ -206,10 +202,10 @@ codeunit 50001 SeminarPost
         SeminarJnlLine."Document Date" := SeminarRegHeader."Document Date";
         SeminarJnlLine."Document No." := PstdSeminarRegHeader."No.";
         SeminarJnlLine."Charge Type" := ChargeType;
-        SeminarJnlLine."Instructor Code" := SeminarRegHeader."Instructor Code";
+        SeminarJnlLine."Instructor Code" := SeminarRegHeader."Instructor Resource No.";
         SeminarJnlLine."Starting Date" := SeminarRegHeader."Starting Date";
         SeminarJnlLine."Seminar Registration No." := PstdSeminarRegHeader."No.";
-        SeminarJnlLine."Room Code." := SeminarRegHeader."Room Code";
+        SeminarJnlLine."Room Code." := SeminarRegHeader."Room Resource No.";
         SeminarJnlLine."Source Type" := SeminarJnlLine."Source Type"::Seminar;
         SeminarJnlLine."Source No." := SeminarRegHeader."Seminar No.";
         SeminarJnlLine."Source Code" := SourceCode;
@@ -218,22 +214,22 @@ codeunit 50001 SeminarPost
         CASE ChargeType OF
             ChargeType::Instructor:
                 BEGIN
-                    Instructor.GET(SeminarRegHeader."Instructor code");
+                    Instructor.GET(SeminarRegHeader."Instructor Resource No.");
                     SeminarJnlLine.Description := Instructor.Name;
                     SeminarJnlLine.Type := SeminarJnlLine.Type::Resource;
                     SeminarJnlLine.Chargeable := FALSE;
                     SeminarJnlLine.Quantity := SeminarRegHeader.Duration;
-                    // SeminarJnlLine."Res. Ledger Entry No." := PostJobJnlLine(Instructor);
+                    SeminarJnlLine."Res. Ledger Entry No." := PostResJnlLine(Instructor);
                 END;
             ChargeType::Room:
                 BEGIN
-                    Room.GET(SeminarRegHeader."Room Code");
+                    Room.GET(SeminarRegHeader."Room Resource No.");
                     SeminarJnlLine.Description := Room.Name;
                     SeminarJnlLine.Type := SeminarJnlLine.Type::Resource;
                     SeminarJnlLine.Chargeable := FALSE;
                     SeminarJnlLine.Quantity := SeminarRegHeader.Duration;
                     // Post to resource ledger
-                    // SeminarJnlLine."Res. Ledger Entry No." := PostJobJnlLine(Room);
+                    SeminarJnlLine."Res. Ledger Entry No." := PostResJnlLine(Room);
                 END;
             ChargeType::Participant:
                 BEGIN
@@ -272,4 +268,5 @@ codeunit 50001 SeminarPost
             UNTIL SeminarCharge.NEXT = 0;
         END;
     END;
+
 }

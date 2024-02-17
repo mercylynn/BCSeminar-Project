@@ -1,4 +1,4 @@
-tableextension 50001 JobJournalLine extends "Job Journal Line"
+tableextension 50001 ResJournalLine extends "Res. Journal Line"
 {
     fields
     {

@@ -27,7 +27,7 @@ page 50004 PostedSeminarRegistration
                 {
                     ApplicationArea = All;
                 }
-                field("Instructor Code."; Rec."Instructor Code.")
+                field("Instructor Code."; Rec."Room Resource No.")
                 {
                     ApplicationArea = All;
                 }
@@ -44,6 +44,10 @@ page 50004 PostedSeminarRegistration
                     ApplicationArea = All;
                 }
                 field(Status; Rec.Status)
+                {
+                    ApplicationArea = All;
+                }
+                field(Approval_Status; Rec.Approval_Status)
                 {
                     ApplicationArea = All;
                 }
@@ -67,7 +71,7 @@ page 50004 PostedSeminarRegistration
             }
             group("Seminar Room")
             {
-                field("Room Resource No."; Rec."Room Code.")
+                field("Room Resource No."; Rec."Room Resource No.")
                 {
                     ApplicationArea = All;
                 }
@@ -111,6 +115,14 @@ page 50004 PostedSeminarRegistration
                     ApplicationArea = All;
                 }
                 field("Seminar Price"; Rec."Seminar Price")
+                {
+                    ApplicationArea = All;
+                }
+                field("Total Amount"; Rec."Total Amount")
+                {
+                    ApplicationArea = All;
+                }
+                field("Line Discount"; Rec."Line Discount")
                 {
                     ApplicationArea = All;
                 }
@@ -178,6 +190,18 @@ page 50004 PostedSeminarRegistration
                 begin
                     Navigate.SetDoc(Rec."Posting Date", Rec."No.");
                     Navigate.Run();
+                end;
+            }
+            action("Print report")
+            {
+                ApplicationArea = Basic;
+                Image = Print;
+                Promoted = true;
+
+                trigger OnAction()
+                begin
+                    Rec.SetRange("No.", Rec."No.");
+                    Report.Run(50000, true, true, Rec);
                 end;
             }
         }

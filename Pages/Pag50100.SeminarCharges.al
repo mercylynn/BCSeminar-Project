@@ -43,11 +43,6 @@ page 50100 SeminarCharges
                 {
                     ApplicationArea = All;
                 }
-
-                // field("Gen. Prod. Posting Group"; Rec."Gen. Prod. Posting Group")
-                // {
-                //     ApplicationArea = All;
-                // }
                 field("Unit Price"; Rec."Unit Price")
                 {
                     ApplicationArea = All;

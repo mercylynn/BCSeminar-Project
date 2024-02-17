@@ -34,6 +34,10 @@ page 50003 PostedSeminarRegList
                 {
                     ApplicationArea = All;
                 }
+                field(Approval_Status; Rec.Approval_Status)
+                {
+                    ApplicationArea = All;
+                }
                 field(Duration; Rec.Duration)
                 {
                     ApplicationArea = All;
@@ -42,11 +46,15 @@ page 50003 PostedSeminarRegList
                 {
                     ApplicationArea = All;
                 }
-                field("Room Code."; Rec."Room Code.")
+                field("Room Code."; Rec."Room Resource No.")
                 {
                     ApplicationArea = All;
                 }
             }
+
+        }
+        area(FactBoxes)
+        {
             part(SeminarDetails; SeminarDetailsFactbox)
             {
                 ApplicationArea = All;

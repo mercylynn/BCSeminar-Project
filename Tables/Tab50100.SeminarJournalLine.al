@@ -100,23 +100,21 @@ table 50009 SeminarJournalLine
         {
             Caption = 'Chargable';
             DataClassification = CustomerContent;
-            InitValue = Yes;
+            // InitValue = Yes;
         }
         field(19; "Room Code."; Code[20])
         {
             Caption = 'Room Resource No.';
             DataClassification = CustomerContent;
-            TableRelation = "Seminar Room";
-            // TableRelation = Resource where(Type = const(Room));
+            TableRelation = Resource where(Type = const(Machine));
         }
         field(20; "Instructor Code"; Code[20])
         {
             Caption = 'Instructor Resource No.';
             DataClassification = CustomerContent;
-            TableRelation = Instructor;
-            //TableRelation = Resource where(Type = const(Person));
+            TableRelation = Resource where(Type = const(Person));
         }
-        field(21; "Starting Date"; Date)
+        field(21; "Starting Date"; DateTime)
         {
             Caption = 'Starting Date';
             DataClassification = CustomerContent;
@@ -126,21 +124,21 @@ table 50009 SeminarJournalLine
             Caption = 'Seminar Registration No.';
             DataClassification = CustomerContent;
         }
-        field(23; "Res. Ledger Entry No."; Integer)
+        // field(23; "Res. Ledger Entry No."; Integer)
+        // {
+        //     Caption = 'Res. Ledger Entry No.';
+        //     DataClassification = CustomerContent;
+        //     TableRelation = "Res. Ledger Entry";
+        // }
+        field(24; "Res. Ledger Entry No."; Integer)
         {
             Caption = 'Res. Ledger Entry No.';
             DataClassification = CustomerContent;
             TableRelation = "Res. Ledger Entry";
         }
-        field(24; "Job. Ledger Entry No."; Integer)
-        {
-            Caption = 'Res. Ledger Entry No.';
-            DataClassification = CustomerContent;
-            TableRelation = "Job Ledger Entry";
-        }
         field(25; "Job No."; Code[20])
         {
-            Caption = 'Res. Ledger Entry No.';
+            Caption = 'Job. Ledger Entry No.';
             DataClassification = CustomerContent;
             TableRelation = "Job";
         }

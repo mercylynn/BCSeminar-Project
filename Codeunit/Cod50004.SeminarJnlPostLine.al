@@ -40,7 +40,9 @@ codeunit 50004 SeminarJnlPostLine
             SeminarJnlLine."Document Date" := SeminarJnlLine."Posting Date";
 
         IF SeminarRegister."No." = 0 THEN BEGIN
-            SeminarRegister.LOCKTABLE;
+            SeminarRegister.Reset();
+            SeminarRegister.SetRange("No.");
+            // SeminarRegister.LOCKTABLE;
             IF (NOT SeminarRegister.FINDLAST) OR (SeminarRegister."To Entry No." <> 0) THEN BEGIN
                 SeminarRegister.INIT;
                 SeminarRegister."No." := SeminarRegister."No." + 1;
@@ -55,6 +57,9 @@ codeunit 50004 SeminarJnlPostLine
         END;
         SeminarRegister."To Entry No." := NextEntryNo;
         SeminarRegister.MODIFY;
+
+        SeminarLedgerEntry.Reset();
+        SeminarLedgerEntry.SetRange("Entry No.");
 
         SeminarLedgerEntry.INIT;
         SeminarLedgerEntry."Seminar No." := SeminarJnlLine."Seminar No.";
@@ -76,7 +81,7 @@ codeunit 50004 SeminarJnlPostLine
         SeminarLedgerEntry."Instructor Code" := SeminarJnlLine."Instructor Code";
         SeminarLedgerEntry."Starting Date" := SeminarJnlLine."Starting Date";
         SeminarLedgerEntry."Seminar Registration No." := SeminarJnlLine."Seminar Registration No.";
-        SeminarLedgerEntry."Job. Ledger Entry No." := SeminarJnlLine."Job. Ledger Entry No.";
+        SeminarLedgerEntry."Res. Ledger Entry No." := SeminarJnlLine."Res. Ledger Entry No.";
         SeminarLedgerEntry."Source Type" := SeminarJnlLine."Source Type";
         SeminarLedgerEntry."Source No." := SeminarJnlLine."Source No.";
         SeminarLedgerEntry."Journal Batch Name" := SeminarJnlLine."Journal Batch Name";

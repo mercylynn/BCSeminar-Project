@@ -1,6 +1,6 @@
 page 50022 SeminarRegistrationSubform
 {
-    Caption = 'Seminar Registration Subform';
+    Caption = 'Seminar Lnes';
     PageType = ListPart;
     SourceTable = SeminarRegistrationLine;
     DelayedInsert = true;

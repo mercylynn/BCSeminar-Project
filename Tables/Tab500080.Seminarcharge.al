@@ -172,6 +172,10 @@ table 50080 Seminarcharge
             DataClassification = CustomerContent;
             Editable = false;
         }
+        field(16; Job; Code[20])
+        {
+            TableRelation = Job;
+        }
     }
     keys
     {

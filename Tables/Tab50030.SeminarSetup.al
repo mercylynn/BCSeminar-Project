@@ -3,6 +3,7 @@ table 50030 "Seminar Setup"
     Caption = 'Seminar Setup';
     DataClassification = CustomerContent;
 
+
     fields
     {
         field(1; "Primary Key"; Code[10])

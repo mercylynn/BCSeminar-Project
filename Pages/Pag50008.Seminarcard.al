@@ -45,6 +45,18 @@ page 50008 SeminarCard
                 {
                     ToolTip = 'Specifies the value of the Last Date Modified field.';
                 }
+                // field("Seminar Date"; Rec."Seminar Date")
+                // {
+                //     ToolTip = 'Seminar Date';
+                // }
+                // field("Start Time"; Rec."Start Time")
+                // {
+                //     ToolTip = 'Start Time';
+                // }
+                // field("End Time"; Rec."End Time")
+                // {
+                //     ToolTip = 'End Time';
+                // }
             }
             group(Invoicing)
             {
@@ -62,10 +74,10 @@ page 50008 SeminarCard
                 {
                     ToolTip = 'Specifies the value of the VAT Prod. Posting Group field.';
                 }
-                field("Job No."; Rec."Job No.")
-                {
-                    ToolTip = 'Specifies the value of the Job No. field.';
-                }
+                // field("Job No."; Rec."Job No.")
+                // {
+                //     ToolTip = 'Specifies the value of the Job No. field.';
+                // }
             }
         }
     }

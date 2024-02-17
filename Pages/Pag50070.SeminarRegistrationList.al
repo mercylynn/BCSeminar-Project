@@ -30,7 +30,7 @@ page 50070 SeminarRegistrationList
                 {
                     ApplicationArea = All;
                 }
-                field(Status; Rec.Status)
+                field(Status; Rec.Approval_Status)
                 {
                     ApplicationArea = All;
                 }
@@ -42,11 +42,15 @@ page 50070 SeminarRegistrationList
                 {
                     ApplicationArea = All;
                 }
-                field("Room Code"; Rec."Room Code")
+                field("Room Code"; Rec."Room Resource No.")
                 {
                     ApplicationArea = All;
                 }
             }
+
+        }
+        area(FactBoxes)
+        {
             part(SeminarDetails; SeminarDetailsFactbox)
             {
                 ApplicationArea = All;
@@ -60,8 +64,12 @@ page 50070 SeminarRegistrationList
             {
                 ApplicationArea = Notes;
             }
+
         }
+
     }
+
+
     actions
     {
         area(Navigation)

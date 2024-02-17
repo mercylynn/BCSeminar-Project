@@ -9,4 +9,8 @@ enumextension 50000 CommentLineExt extends "Comment Line Table Name"
     {
         Caption = 'Seminar';
     }
+    value(50003; "Ticket")
+    {
+        Caption = 'Seminar';
+    }
 }

@@ -8,5 +8,7 @@ tableextension 50000 SourceCodeSetUpExt extends "Source Code Setup"
             DataClassification = CustomerContent;
             TableRelation = "Source Code";
         }
+
+
     }
 }

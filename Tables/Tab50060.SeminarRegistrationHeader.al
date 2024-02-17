@@ -22,16 +22,26 @@ table 50060 SeminarRegistrationHeader
                 "No. Series" := '';
             end;
         }
-        field(2; "Starting Date"; Date)
+        field(2; "Starting Date"; DateTime)
         {
             Caption = 'Starting Date';
             DataClassification = CustomerContent;
-
-            trigger OnValidate()
+            trigger OnLookup()
             begin
-                if "Starting Date" <> xRec."Starting Date" then
-                    TestField(Status, Status::Planning);
+                "Starting Date" := SetDateTime("Starting Date");
             end;
+
+            // trigger OnValidate()
+            // begin
+            //     if "Starting Date" <> xRec."Starting Date" then
+            //         TestField(Status, Status::Planning);
+            //     begin
+            //         "Ending Date" := CalcDate('+' + Format(Duration), "Starting Date");
+            //         Validate("Ending Date");
+            //     end;
+            // end;
+
+
         }
         field(3; "Seminar No."; Code[20])
         {
@@ -45,7 +55,7 @@ table 50060 SeminarRegistrationHeader
                     exit;
 
                 Seminar.GET("Seminar No.");
-                // Seminar.TESTFIELD(Blocked, FALSE);
+                Seminar.TESTFIELD(Blocked, FALSE);
                 Seminar.TESTFIELD("Gen. Prod. Posting Group");
                 Seminar.TESTFIELD("VAT Prod. Posting Group");
                 "Seminar Name" := Seminar.Name;
@@ -62,19 +72,30 @@ table 50060 SeminarRegistrationHeader
             Caption = 'Seminar Name';
             DataClassification = CustomerContent;
         }
-        field(5; "Instructor Code"; Code[20])
+        field(5; "Instructor Resource No."; Code[20])
         {
             Caption = 'Instructor Resource No.';
             DataClassification = CustomerContent;
-            TableRelation = Instructor;
-            // TableRelation = Resource where(Type = const(Person));
+            TableRelation = Resource where(Type = const(Person));
+
+            trigger OnValidate()
+            var
+                Resource: Record Resource;
+            begin
+                if (Resource.Get("Instructor Resource No.")) then begin
+                    "Instructor Name" := Resource.Name;
+                end;
+            end;
         }
         field(6; "Instructor Name"; Text[100])
         {
             Caption = 'Instructor Name';
-            DataClassification = CustomerContent;
+            Editable = false;
+            // FieldClass = FlowField;
+            // CalcFormula = lookup(Resource."No." where("No." = field("Instructor Resource No.")));
+
         }
-        field(7; Status; Enum SeminarRegistrationStatus)
+        field(7; Approval_Status; Enum SeminarRegistrationStatus)
         {
             Caption = 'Status';
             DataClassification = CustomerContent;
@@ -94,55 +115,54 @@ table 50060 SeminarRegistrationHeader
             Caption = 'Minimum Participants';
             DataClassification = CustomerContent;
         }
-        field(11; "Room Code"; Code[20])
+        field(11; "Room Resource No."; Code[20])
         {
             Caption = 'Room Resource No.';
             DataClassification = CustomerContent;
-            TableRelation = "Seminar Room";
-            // TableRelation = Resource where(Type = const(Room));
+            TableRelation = Resource where(Type = const(Machine));
 
-            // trigger OnValidate()
-            // var
-            //     SeminarRoom: Record Resource;
-            // begin
-            //     if "Room Resource No." = xRec."Room Resource No." then
-            //         exit;
+            trigger OnValidate()
+            var
+                SeminarRoom: Record Resource;
+            begin
+                if "Room Resource No." = xRec."Room Resource No." then
+                    exit;
 
-            //     IF "Room Resource No." = '' THEN BEGIN
-            //         "Room Name" := '';
-            //         "Room Address" := '';
-            //         "Room Address 2" := '';
-            //         "Room Post Code" := '';
-            //         "Room City" := '';
-            //         "Room County" := '';
-            //         "Room Country/Reg. Code" := '';
-            //     END ELSE BEGIN
-            //         SeminarRoom.GET("Room Resource No.");
-            //         "Room Name" := SeminarRoom.Name;
-            //         "Room Address" := SeminarRoom.Address;
-            //         "Room Address 2" := SeminarRoom."Address 2";
-            //         "Room Post Code" := SeminarRoom."Post Code";
-            //         "Room City" := SeminarRoom.City;
-            //         "Room County" := SeminarRoom.County;
-            //         "Room Country/Reg. Code" := SeminarRoom."Country/Region Code";
+                IF "Room Resource No." = '' THEN BEGIN
+                    "Room Name" := '';
+                    "Room Address" := '';
+                    "Room Address 2" := '';
+                    "Room Post Code" := '';
+                    "Room City" := '';
+                    "Room County" := '';
+                    "Room Country/Reg. Code" := '';
+                END ELSE BEGIN
+                    SeminarRoom.GET("Room Resource No.");
+                    "Room Name" := SeminarRoom.Name;
+                    "Room Address" := SeminarRoom.Address;
+                    "Room Address 2" := SeminarRoom."Address 2";
+                    "Room Post Code" := SeminarRoom."Post Code";
+                    "Room City" := SeminarRoom.City;
+                    "Room County" := SeminarRoom.County;
+                    "Room Country/Reg. Code" := SeminarRoom."Country/Region Code";
 
-            //         IF CurrFieldNo = 0 THEN
-            //             exit;
+                    IF CurrFieldNo = 0 THEN
+                        exit;
 
-            //         IF (SeminarRoom."Maximum Participants" <> 0) AND
-            //            (SeminarRoom."Maximum Participants" < "Maximum Participants")
-            //         THEN BEGIN
-            //             IF CONFIRM(ChangeSeminarRoomQst, TRUE,
-            //                  "Maximum Participants",
-            //                  SeminarRoom."Maximum Participants",
-            //                  FIELDCAPTION("Maximum Participants"),
-            //                  "Maximum Participants",
-            //                  SeminarRoom."Maximum Participants")
-            //             THEN
-            //                 "Maximum Participants" := SeminarRoom."Maximum Participants";
-            //         END;
-            //     END;
-            // end;
+                    IF (SeminarRoom."Maximum Participants" <> 0) AND
+                       (SeminarRoom."Maximum Participants" < "Maximum Participants")
+                    THEN BEGIN
+                        IF CONFIRM(ChangeSeminarRoomQst, TRUE,
+                             "Maximum Participants",
+                             SeminarRoom."Maximum Participants",
+                             FIELDCAPTION("Maximum Participants"),
+                             "Maximum Participants",
+                             SeminarRoom."Maximum Participants")
+                        THEN
+                            "Maximum Participants" := SeminarRoom."Maximum Participants";
+                    END;
+                END;
+            end;
         }
         field(12; "Room Name"; Text[100])
         {
@@ -269,6 +289,50 @@ table 50060 SeminarRegistrationHeader
             Caption = 'Posting No.';
             DataClassification = CustomerContent;
         }
+        // field(29; "Ending Date"; Date)
+        // {
+        //     Caption = 'Ending Date';
+
+        // }
+        field(40; Status; Enum ApprovalStatus)
+        {
+            Caption = 'Approval Status';
+
+        }
+        field(41; No_Printed; Integer)
+        {
+            DataClassification = ToBeClassified;
+            Editable = false;
+        }
+        field(42; "Total Amount"; Decimal)
+        {
+            Editable = false;
+            DecimalPlaces = 0 : 5;
+            FieldClass = FlowField;
+            CalcFormula = sum(SeminarRegistrationLine.Amount where("Document No." = field("No.")));
+        }
+        field(43; "Line Discount"; Decimal)
+        {
+            Editable = false;
+            DecimalPlaces = 0 : 5;
+            FieldClass = FlowField;
+            CalcFormula = sum(SeminarRegistrationLine."Line Discount Amount" where("Document No." = field("No.")));
+        }
+        field(44; "Number of Lines"; Integer)
+        {
+            Editable = false;
+            CalcFormula = count(SeminarRegistrationLine where("Document No." = field("No.")));
+            FieldClass = FlowField;
+        }
+        field(45; "End Time"; DateTime)
+        {
+            DataClassification = ToBeClassified;
+            trigger OnLookup()
+            begin
+                "End Time" := SetDateTime("End Time");
+            end;
+        }
+
     }
     keys
     {
@@ -276,7 +340,7 @@ table 50060 SeminarRegistrationHeader
         {
             Clustered = true;
         }
-        key(Index2; "Room Code")
+        key(Index2; "Room Resource No.")
         {
             SumIndexFields = Duration;
         }
@@ -312,7 +376,7 @@ table 50060 SeminarRegistrationHeader
 
     trigger OnDelete()
     begin
-        TestField(Status, Status::Cancelled);
+        TestField(Approval_Status, Approval_Status::Cancelled);
 
         SeminarRegLine.RESET;
         SeminarRegLine.SETRANGE("Document No.", "No.");
@@ -365,5 +429,15 @@ table 50060 SeminarRegistrationHeader
         NoSeriesMgt.SetSeries("No.");
         Rec := SeminarRegHeader;
         exit(TRUE);
+    end;
+
+    local procedure SetDateTime(MainDateTime: DateTime): DateTime
+    var
+        DateTimePage: Page "Date-Time Dialog";
+    begin
+        DateTimePage.SetDateTime(MainDateTime);
+
+        if DateTimePage.RunModal() = Action::OK then
+            exit(DateTimePage.GetDateTime());
     end;
 }

@@ -4,6 +4,7 @@ page 50050 "Seminar Setup"
     PageType = Card;
     SourceTable = "Seminar Setup";
     UsageCategory = Administration;
+    ApplicationArea = All;
 
     layout
     {

@@ -1,8 +1,13 @@
+/// <summary>
+/// Page SeminarRegistration (ID 50060).
+/// </summary>
 page 50060 SeminarRegistration
 {
     Caption = 'Seminar Registration';
     PageType = Document;
     SourceTable = SeminarRegistrationHeader;
+    RefreshOnActivate = true;
+    PromotedActionCategories = 'New,Process,Report,Approvals,Navigate';
 
     layout
     {
@@ -24,6 +29,7 @@ page 50060 SeminarRegistration
                 field("Starting Date"; Rec."Starting Date")
                 {
                     ApplicationArea = All;
+
                 }
                 field("Seminar No."; Rec."Seminar No.")
                 {
@@ -33,7 +39,7 @@ page 50060 SeminarRegistration
                 {
                     ApplicationArea = All;
                 }
-                field("Instructor Code"; Rec."Instructor Code")
+                field("Instructor Code"; Rec."Instructor Resource No.")
                 {
                     ApplicationArea = All;
                 }
@@ -49,9 +55,14 @@ page 50060 SeminarRegistration
                 {
                     ApplicationArea = All;
                 }
-                field(Status; Rec.Status)
+                field("Document Status"; Rec.Approval_Status)
                 {
                     ApplicationArea = All;
+                }
+                field(Approval_Status; Rec.Status)
+                {
+                    ApplicationArea = All;
+                    Editable = false;
                 }
                 field(Duration; Rec.Duration)
                 {
@@ -60,8 +71,14 @@ page 50060 SeminarRegistration
                 field("Minimum Participants"; Rec."Minimum Participants")
                 {
                     ApplicationArea = All;
+                    Editable = false;
                 }
                 field("Maximum Participants"; Rec."Maximum Participants")
+                {
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+                field("End Time"; Rec."End Time")
                 {
                     ApplicationArea = All;
                 }
@@ -73,9 +90,30 @@ page 50060 SeminarRegistration
             }
             group("Seminar Room")
             {
-                field("Room Code"; Rec."Room Code")
+                field("Room Code"; Rec."Room Resource No.")
                 {
                     ApplicationArea = All;
+                    trigger OnValidate()
+                    var
+                        SeminarRegistrationHeader: Record "SeminarRegistrationHeader";
+                        ExistingSeminarRegistration: Record PostedSeminarRegHeader;
+                        RoomCode: Code[20];
+                        SeminarNo: Code[20];
+                        IsRoomSelected: Boolean;
+                    begin
+                        // Retrieve the selected room code
+                        RoomCode := Rec."Room Resource No.";
+                        // Retrieve the current seminar registration number
+                        SeminarNo := Rec."No.";
+                        // Check if the selected room is already chosen in another seminar registration
+                        // IsRoomSelected := CheckRoomSelected(RoomCode, SeminarNo);
+                        // Show error message if the room is already selected in another registration
+                        if IsRoomSelected then begin
+                            Error('The selected room is already chosen in another seminar registration.');
+                            Rec."Room Resource No." := '';
+                        end;
+                    end;
+
                 }
                 field("Room Name"; Rec."Room Name")
                 {
@@ -117,6 +155,18 @@ page 50060 SeminarRegistration
                     ApplicationArea = All;
                 }
                 field("Seminar Price"; Rec."Seminar Price")
+                {
+                    ApplicationArea = All;
+                }
+                field("Total Amount"; Rec."Total Amount")
+                {
+                    ApplicationArea = All;
+                }
+                field("Line Discount"; Rec."Line Discount")
+                {
+                    ApplicationArea = All;
+                }
+                field("Number of Lines"; Rec."Number of Lines")
                 {
                     ApplicationArea = All;
                 }
@@ -187,6 +237,79 @@ page 50060 SeminarRegistration
                     RunObject = codeunit SeminarPostYesNo;
                 }
             }
+            group("Request Approval")
+            {
+                Caption = 'Request Approval';
+                Image = SendApprovalRequest;
+
+                action(SendApprovalRequest)
+                {
+                    ApplicationArea = Basic;
+                    Caption = 'Send A&pproval Request';
+                    Image = SendApprovalRequest;
+                    Promoted = true;
+                    PromotedCategory = Category4;
+
+                    trigger OnAction()
+                    VAR
+                        RecRef: RecordRef;
+                        VarVariant: Variant;
+                        CustomApprovals: Codeunit "CApprovals";
+                    begin
+                        if not Confirm('Are you sure you want to send Seminar List for approval?') then
+                            exit;
+
+                        VarVariant := Rec;
+                        IF CustomApprovals.CheckApprovalsWorkflowEnabled(VarVariant) THEN
+                            CustomApprovals.OnSendDocForApproval(VarVariant);
+                    end;
+                }
+                action(CancelApprovalRequest)
+                {
+                    ApplicationArea = Basic;
+                    Caption = 'Cancel Approval Re&quest';
+                    Image = Cancel;
+                    Promoted = true;
+                    PromotedCategory = Category4;
+
+                    trigger OnAction()
+                    var
+                        // RecRef: RecordRef;
+                        // ApprovalEntry: Record "Approval Entry";
+                        VarVariant: Variant;
+                        CustomApprovals: Codeunit "CApprovals";
+                    begin
+                        Rec.TestField(Status, Rec.Status::Pending);
+                        if not Confirm('Are you sure you want to Cancel this Request for approval?') then
+                            exit;
+                        VarVariant := Rec;
+                        CustomApprovals.OnCancelDocApprovalRequest(VarVariant);
+                    end;
+                }
+            }
         }
     }
+
+    // local procedure CheckRoomSelected(RoomCode: Code[20]; SeminarNo: Code[20]): Boolean
+    // var
+    //     ExistingSeminarRegistration: Record PostedSeminarRegHeader;
+    //     IsRoomSelected: Boolean;
+    // begin
+    //     // Query to check if the room is selected in another seminar registration
+    //     IsRoomSelected := false;
+    //     if ExistingSeminarRegistration.FINDSET then
+    //         repeat
+    //             // Check if the room is selected in another seminar registration and exclude the current seminar
+    //             if (ExistingSeminarRegistration."No." <> SeminarNo) and (ExistingSeminarRegistration."Room Resource No." = RoomCode) then begin
+    //                 IsRoomSelected := true;
+    //                 break;
+    //             end;
+    //         until ExistingSeminarRegistration.NEXT = 0;
+
+    //     exit(IsRoomSelected);
+    // end;
+
+
+
+
 }

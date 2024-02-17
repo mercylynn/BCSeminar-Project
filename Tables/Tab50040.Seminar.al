@@ -9,13 +9,13 @@ table 50040 Seminar
         {
             Caption = 'No.';
             DataClassification = CustomerContent;
-
             trigger OnValidate()
             begin
                 if "No." = xRec."No." then
                     exit;
 
                 SeminarSetup.Get();
+                SeminarSetup.TestField("Seminar Nos.");
                 NoSeriesMgt.TestManual(SeminarSetup."Seminar Nos.");
                 "No. Series" := '';
             end;
@@ -47,6 +47,18 @@ table 50040 Seminar
         {
             Caption = 'Maximum Participants';
             DataClassification = CustomerContent;
+            trigger OnValidate()
+            var
+                valid: Boolean;
+            begin
+                If "Minimum Participants" <> 0 then begin
+                    valid := "Maximum Participants" >= "Minimum Participants";
+                    if not Valid then begin
+                        Error('Maximum Cannot be less than Minimum');
+                    end;
+                end;
+
+            end;
         }
         field(6; "Search Name"; Code[50])
         {
@@ -99,17 +111,33 @@ table 50040 Seminar
             Caption = 'No. Series';
             DataClassification = CustomerContent;
             TableRelation = "No. Series";
+            Editable = false;
         }
         field(14; "Last Date Modified"; Date)
         {
             DataClassification = CustomerContent;
             Editable = false;
         }
-        field(15; "Job No."; code[20])
+        field(15; "Start Time"; DateTime)
         {
-            DataClassification = ToBeClassified;
-            TableRelation = Job where(Blocked = const(" "));
+            DataClassification = CustomerContent;
         }
+        field(16; "End Time"; DateTime)
+        {
+            DataClassification = CustomerContent;
+        }
+
+        // field(17; "Seminar Date"; DateTime)
+        // {
+
+        // }
+
+
+        // field(15; "Job No."; code[20])
+        // {
+        //     DataClassification = ToBeClassified;
+        //     TableRelation = Job where(Blocked = const(" "));
+        // }
     }
     keys
     {

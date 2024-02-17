@@ -29,7 +29,7 @@ codeunit 50003 SeminarJnlCheckLine
         END;
 
         IF SemJnlLine.Chargeable THEN
-            SemJnlLine.TestField("Bill-to Customer No.");
+            // SemJnlLine.TestField("Bill-to Customer No.");
 
         CheckDates(SemJnlLine);
     end;

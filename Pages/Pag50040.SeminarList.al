@@ -48,7 +48,11 @@ page 50040 "Seminar List"
                 {
                     ToolTip = 'Specifies the value of the VAT Prod. Posting Group field.';
                 }
-                field("Job No."; Rec."Job No.")
+                // field("Job No."; Rec."Job No.")
+                // {
+                //     ToolTip = 'Specifies the value of the Job No. field.';
+                // }
+                field(Comment; Rec.Comment)
                 {
                     ToolTip = 'Specifies the value of the Job No. field.';
                 }

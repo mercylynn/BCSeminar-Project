@@ -99,7 +99,7 @@ page 50002 SeminarLedgerEntries
                     ApplicationArea = All;
                     Visible = false;
                 }
-                field("Job. Ledger Entry No."; Rec."Job. Ledger Entry No.")
+                field("Res. Ledger Entry No."; Rec."Res. Ledger Entry No.")
                 {
                     ApplicationArea = All;
                     Visible = false;

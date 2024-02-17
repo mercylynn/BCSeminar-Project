@@ -87,21 +87,21 @@ table 50001 SeminarLedgerEntry
         {
             Caption = 'Chargeable';
             DataClassification = CustomerContent;
-            InitValue = yes;
+            InitValue = true;
         }
         field(17; "Room Code."; Code[20])
         {
             Caption = 'Room Resource No.';
             DataClassification = CustomerContent;
-            TableRelation = "Seminar Room";
+            TableRelation = Resource where(Type = const(Machine));
         }
         field(18; "Instructor Code"; Code[20])
         {
             Caption = 'Instructor Resource No.';
             DataClassification = CustomerContent;
-            TableRelation = Instructor;
+            TableRelation = Resource where(Type = const(Person));
         }
-        field(19; "Starting Date"; Date)
+        field(19; "Starting Date"; DateTime)
         {
             Caption = 'Starting Date';
             DataClassification = CustomerContent;
@@ -111,7 +111,7 @@ table 50001 SeminarLedgerEntry
             Caption = 'Seminar Registration No.';
             DataClassification = CustomerContent;
         }
-        field(21; "Job. Ledger Entry No."; Integer)
+        field(21; "Res. Ledger Entry No."; Integer)
         {
             Caption = 'Res. Ledger Entry No.';
             DataClassification = CustomerContent;
