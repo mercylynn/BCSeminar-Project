@@ -7,7 +7,7 @@ page 50060 SeminarRegistration
     PageType = Document;
     SourceTable = SeminarRegistrationHeader;
     RefreshOnActivate = true;
-    PromotedActionCategories = 'New,Process,Report,Approvals,Navigate';
+    PromotedActionCategories = 'New,Process,Report,Request Approval,Approvals,';
 
     layout
     {
@@ -219,6 +219,25 @@ page 50060 SeminarRegistration
                     RunObject = page SeminarCharges;
                     RunPageLink = "Document No." = field("No.");
                 }
+                action(Approvalss)
+                {
+                    ApplicationArea = Basic;
+                    Caption = 'Approvals';
+                    Image = Approvals;
+                    // Promoted = true;
+                    // PromotedCategory = Category17;
+
+                    trigger OnAction()
+                    var
+                        ApprovalEntries: page "Approval Entries";
+                        DocType: Enum "Approval Document Type";
+                    begin
+                        DocType := DocType::" ";
+                        ApprovalEntries.SetRecordFilters(Database::SeminarRegistrationHeader, DocType, Rec."No.");
+                        ApprovalEntries.Run();
+
+                    end;
+                }
             }
         }
         area(Processing)
@@ -234,7 +253,18 @@ page 50060 SeminarRegistration
                     ApplicationArea = All;
                     Image = PostDocument;
                     Promoted = true;
-                    RunObject = codeunit SeminarPostYesNo;
+                    //RunObject = codeunit SeminarPostYesNo;
+                    trigger OnAction()
+                    var
+                        SeminarPost: Codeunit SeminarPost;
+                    begin
+                        // Rec.TestField(Status, Rec.Status::Approved);
+                        if Confirm('Are you sure you want to post') = true then begin
+
+                            SeminarPost.postSeminar(Rec);
+                        end;
+
+                    end;
                 }
             }
             group("Request Approval")
@@ -284,6 +314,30 @@ page 50060 SeminarRegistration
                             exit;
                         VarVariant := Rec;
                         CustomApprovals.OnCancelDocApprovalRequest(VarVariant);
+                    end;
+                }
+            }
+            group(Approvals)
+            {
+                Caption = 'Approvals';
+
+                action(Approval)
+                {
+                    ApplicationArea = Basic;
+                    Caption = 'Approvals';
+                    Image = Approvals;
+                    Promoted = true;
+                    PromotedCategory = Category5;
+
+                    trigger OnAction()
+                    var
+                        ApprovalEntries: page "Approval Entries";
+                        DocType: Enum "Approval Document Type";
+                    begin
+                        DocType := DocType::" ";
+                        ApprovalEntries.SetRecordFilters(Database::SeminarRegistrationHeader, DocType, Rec."No.");
+                        ApprovalEntries.Run();
+
                     end;
                 }
             }

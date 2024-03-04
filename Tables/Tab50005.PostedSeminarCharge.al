@@ -68,7 +68,7 @@ table 50005 PostedSeminarCharge
         {
             Caption = 'Bill-to Customer No.';
             DataClassification = CustomerContent;
-            TableRelation = Customer;
+            TableRelation = Seminar;
         }
         field(11; "Unit of Measure Code"; Code[10])
         {

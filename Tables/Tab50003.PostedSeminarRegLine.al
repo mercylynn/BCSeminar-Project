@@ -20,7 +20,7 @@ table 50003 PostedSeminarRegLine
         {
             Caption = 'Bill-to Customer No.';
             DataClassification = CustomerContent;
-            TableRelation = Customer where(Blocked = const(" "));
+            //TableRelation = Seminar where(Blocked = const(" "));
         }
         field(4; "Participant Contact No."; Code[20])
         {

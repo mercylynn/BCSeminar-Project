@@ -55,7 +55,7 @@ table 50009 SeminarJournalLine
         {
             Caption = 'Bill-to Customer No.';
             DataClassification = CustomerContent;
-            TableRelation = Customer;
+            TableRelation = Seminar;
         }
         field(11; "Charge Type"; Enum SeminarJournalChargeType)
         {

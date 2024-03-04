@@ -41,6 +41,32 @@ table 50060 SeminarRegistrationHeader
             //     end;
             // end;
 
+            // trigger OnValidate()
+            // begin
+            //     // Check if the "End Time" field is blank
+            //     if "Starting Date" <> 0DT THEN begin
+
+            //     end;
+            // end;
+            trigger OnValidate()
+            var
+            begin
+                // Calculate end time only if starting date and duration are provided
+                if ("Starting Date" <> 0DT) AND (Duration > 0) THEN begin
+                    MESSAGE('Starting Date: ' + FORMAT("Starting Date"));
+                    MESSAGE('Duration: ' + FORMAT(Duration));
+
+
+                    // Calculate end time by adding duration (in hours) to starting time
+                    "End Time" := "Starting Date" + (Duration * 3600000); // Convert hours to seconds
+
+                    Message(Format("End Time" - "Starting Date"));
+
+                end;
+            end;
+
+
+
 
         }
         field(3; "Seminar No."; Code[20])
@@ -297,7 +323,6 @@ table 50060 SeminarRegistrationHeader
         field(40; Status; Enum ApprovalStatus)
         {
             Caption = 'Approval Status';
-
         }
         field(41; No_Printed; Integer)
         {
@@ -331,6 +356,11 @@ table 50060 SeminarRegistrationHeader
             begin
                 "End Time" := SetDateTime("End Time");
             end;
+        }
+        field(46; Posted; Boolean)
+        {
+            DataClassification = ToBeClassified;
+            Editable = false;
         }
 
     }
@@ -440,4 +470,7 @@ table 50060 SeminarRegistrationHeader
         if DateTimePage.RunModal() = Action::OK then
             exit(DateTimePage.GetDateTime());
     end;
+
+
+
 }

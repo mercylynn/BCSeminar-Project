@@ -9,6 +9,8 @@ report 50000 RegParticipants
     {
         dataitem(PostedSeminarRegHeader; PostedSeminarRegHeader)
         {
+            RequestFilterFields = "No.", "Seminar No.";
+
             column(InstructorName; "Instructor Name")
             {
             }
@@ -69,6 +71,7 @@ report 50000 RegParticipants
             {
                 DataItemLink = "Document No." = field("No.");
                 DataItemTableView = sorting("Document No.", "Line No.") order(ascending);
+
                 column(Bill_to_Customer_No_; "Bill-to Customer No.")
                 {
 

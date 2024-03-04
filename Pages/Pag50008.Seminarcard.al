@@ -16,6 +16,11 @@ page 50008 SeminarCard
                 field("No."; Rec."No.")
                 {
                     ToolTip = 'Specifies the value of the No. field.';
+                    trigger OnAssistEdit()
+                    begin
+                        if Rec.AssistEdit(xRec) then
+                            CurrPage.Update();
+                    end;
                 }
                 field(Name; Rec.Name)
                 {

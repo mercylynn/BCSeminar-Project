@@ -11,7 +11,7 @@ table 50040 Seminar
             DataClassification = CustomerContent;
             trigger OnValidate()
             begin
-                if "No." = xRec."No." then
+                if "No." = XRec."No." then
                     exit;
 
                 SeminarSetup.Get();
@@ -126,6 +126,30 @@ table 50040 Seminar
         {
             DataClassification = CustomerContent;
         }
+        field(17; "Global Dimension 1 Code"; Code[20])
+        {
+            CaptionClass = '1,1,1';
+            Caption = 'Global Dimension 1 Code';
+            TableRelation = "Dimension Value".Code WHERE("Global Dimension No." = CONST(1),
+                                                          Blocked = CONST(false));
+
+            trigger OnValidate()
+            begin
+                //ValidateShortcutDimCode(1, "Global Dimension 1 Code");
+            end;
+        }
+        field(18; "Global Dimension 2 Code"; Code[20])
+        {
+            CaptionClass = '1,1,2';
+            Caption = 'Global Dimension 2 Code';
+            TableRelation = "Dimension Value".Code WHERE("Global Dimension No." = CONST(2),
+                                                          Blocked = CONST(false));
+
+            trigger OnValidate()
+            begin
+                //ValidateShortcutDimCode(2, "Global Dimension 2 Code");
+            end;
+        }
 
         // field(17; "Seminar Date"; DateTime)
         // {
@@ -154,6 +178,7 @@ table 50040 Seminar
         GenProdPostingGroup: Record "Gen. Product Posting Group";
         NoSeriesMgt: Codeunit NoSeriesManagement;
         Job: Record Job;
+        DimMgt: Codeunit DimensionManagement;
 
 
     trigger OnModify()
@@ -204,4 +229,37 @@ table 50040 Seminar
             exit(true);
         end;
     end;
+
+    // procedure ValidateShortcutDimCode(FieldNumber: Integer; var ShortcutDimCode: Code[20])
+    // var
+    //     IsHandled: Boolean;
+    // begin
+    //     IsHandled := false;
+    //     OnBeforeValidateShortcutDimCode(Rec, xRec, FieldNumber, ShortcutDimCode, IsHandled);
+    //     if IsHandled then
+    //         exit;
+
+    //     DimMgt.ValidateDimValueCode(FieldNumber, ShortcutDimCode);
+    //     if not IsTemporary then begin
+    //         DimMgt.SaveDefaultDim(DATABASE::Seminar, "No.", FieldNumber, ShortcutDimCode);
+    //         Modify();
+    //     end;
+
+    //     OnAfterValidateShortcutDimCode(Rec, xRec, FieldNumber, ShortcutDimCode);
+    // end;
+
+    // [IntegrationEvent(false, false)]
+    // local procedure OnBeforeValidateShortcutDimCode(var Seminar: Record Seminar; var xSeminar: Record Seminar; FieldNumber: Integer; var ShortcutDimCode: Code[20]; var IsHandled: Boolean)
+    // begin
+    // end;
+
+
+    // [IntegrationEvent(false, false)]
+    // local procedure OnAfterValidateShortcutDimCode(var Customer: Record Seminar; var xCustomer: Record Seminar; FieldNumber: Integer; var ShortcutDimCode: Code[20])
+    // begin
+    // end;
+
+
+
+
 }

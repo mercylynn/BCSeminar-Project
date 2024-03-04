@@ -113,7 +113,7 @@ page 50006 "Seminar Manager Role Center"
             action(Instructors)
             {
                 ApplicationArea = Basic, Suite;
-                Caption = 'Items';
+                Caption = 'Trainers';
                 Image = Customer;
                 RunObject = Page "Resource List";
                 RunPageView = where(Type = Const(Person));
@@ -132,7 +132,23 @@ page 50006 "Seminar Manager Role Center"
                 ApplicationArea = Planning;
                 Caption = 'Closed Seminar Registration';
                 RunObject = Page SeminarRegistrationList;
-                RunPageView = WHERE(Approval_Status = CONST(Planning));
+                RunPageView = WHERE(Approval_Status = CONST(Closed));
+                ToolTip = 'Calculate a supply plan to fulfill item demand with purchases or transfers.';
+            }
+            action("Registration Awaiting Approval")
+            {
+                ApplicationArea = Planning;
+                Caption = 'Registration Awaiting Approval';
+                RunObject = Page SeminarRegistrationList;
+                RunPageView = WHERE(Status = const(Pending));
+                ToolTip = 'Calculate a supply plan to fulfill item demand with purchases or transfers.';
+            }
+            action("Approved Seminar Registration")
+            {
+                ApplicationArea = Planning;
+                Caption = 'Approved Seminar Registration';
+                RunObject = Page SeminarRegistrationList;
+                RunPageView = WHERE(Status = const(Approved));
                 ToolTip = 'Calculate a supply plan to fulfill item demand with purchases or transfers.';
             }
         }
@@ -170,7 +186,7 @@ page 50006 "Seminar Manager Role Center"
                     Image = PostedShipment;
                     Promoted = true;
                     PromotedCategory = Process;
-                    RunObject = Page "Posted Service Shipments";
+                    RunObject = Page PostedSeminarRegList;
                     ToolTip = 'Open the list of posted seminar Registration.';
                 }
                 action("Posted Seminar Invoices")
@@ -180,7 +196,7 @@ page 50006 "Seminar Manager Role Center"
                     Image = PostedServiceOrder;
                     Promoted = true;
                     PromotedCategory = Process;
-                    RunObject = Page "Posted Service Invoices";
+                    RunObject = Page "Posted Sales Invoice";
                     ToolTip = 'Open the list of posted seminar invoices.';
                 }
                 action("Posted Seminar Credit Memos")
@@ -256,9 +272,41 @@ page 50006 "Seminar Manager Role Center"
                 RunPageMode = Create;
                 ToolTip = 'Create a new sales order for items or services that require partial posting or order confirmation.';
             }
-        }
+            group(Reports)
+            {
+                Caption = 'Reports';
+                group("Seminar Reports")
+                {
+                    Caption = 'Seminar reports';
+                    Image = ReferenceData;
+                    action("Participant List")
+                    {
+                        ApplicationArea = Basic, Suite;
+                        Caption = 'Participants List';
+                        Image = "Report";
+                        Promoted = true;
+                        PromotedCategory = "Report";
+                        PromotedIsBig = true;
+                        RunObject = Report RegParticipants;
+                        ToolTip = 'View Participants report ';
+                    }
+                    // action("Certificate")
+                    // {
+                    //     ApplicationArea = Basic, Suite;
+                    //     Caption = 'Income Statement';
+                    //     Image = "Report";
+                    //     Promoted = true;
+                    //     PromotedCategory = "Report";
+                    //     PromotedIsBig = true;
+                    //     RunObject = Report ;
+                    //     ToolTip = 'View a report that shows your company''s income and expenses.';
+                    // } 
+                }
 
+            }
+        }
     }
+
 }
 
 profile "Seminar Manager"

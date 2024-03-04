@@ -13,7 +13,7 @@ codeunit 50001 SeminarPost
         PstdSeminarCharge: Record PostedSeminarCharge;
         Room: Record Resource;
         Instructor: Record Resource;
-        Customer: Record Customer;
+        Customer: Record Seminar;
         ResLedgEntry: Record "Res. Ledger Entry";
         SeminarJnlLine: Record SeminarJournalLine;
         SourceCodeSetup: Record "Source Code Setup";
@@ -33,6 +33,9 @@ codeunit 50001 SeminarPost
         Text006: Label 'The combination of dimensions used in %1, line no. %2 is blocked. %3';
         Text007: Label 'The dimensions used in %1 are invalid. %2';
         Text008: Label 'The dimensions used in %1, line no. %2 are invalid. %3';
+        SMTP: Codeunit "Email Message";
+
+
 
     trigger OnRun()
     begin
@@ -144,7 +147,7 @@ codeunit 50001 SeminarPost
         SeminarCommentLine.RESET;
         SeminarCommentLine.SETRANGE("Document Type", FromDocumentType);
         SeminarCommentLine.SETRANGE("No.", FromNumber);
-        IF SeminarCommentLine.FINDSET(FALSE, FALSE) THEN BEGIN
+        IF SeminarCommentLine.FINDSET THEN BEGIN
             REPEAT
                 SeminarCommentLine2 := SeminarCommentLine;
                 SeminarCommentLine2."Document Type" := ToDocumentType;
@@ -158,7 +161,7 @@ codeunit 50001 SeminarPost
     BEGIN
         SeminarCharge.RESET;
         SeminarCharge.SETRANGE("Document No.", FromNumber);
-        IF SeminarCharge.FINDSET(FALSE, FALSE) THEN BEGIN
+        IF SeminarCharge.FINDSET THEN BEGIN
             REPEAT
                 PstdSeminarCharge.TRANSFERFIELDS(SeminarCharge);
                 PstdSeminarCharge."Document No." := ToNumber;
@@ -259,14 +262,87 @@ codeunit 50001 SeminarPost
     END;
 
     LOCAL PROCEDURE PostCharges()
+
     BEGIN
         SeminarCharge.RESET;
         SeminarCharge.SETRANGE("Document No.", SeminarRegHeader."No.");
-        IF SeminarCharge.FINDSET(FALSE, FALSE) THEN BEGIN
+        IF SeminarCharge.FINDSET THEN BEGIN
             REPEAT
+
+                //Contact.SetRange("No.", SeminarCharge.);
                 PostSeminarJnlLine(SeminarJnlLine."Charge Type"::Charge); // Charge
+
+
             UNTIL SeminarCharge.NEXT = 0;
+
         END;
     END;
+
+    procedure postSeminar(SeminarRegistrationHeader: Record "SeminarRegistrationHeader")
+    var
+        GenJnLine: Record "Gen. Journal Line";
+        LineNo: Integer;
+        SemRegLine: Record SeminarRegistrationLine;
+        EmailBody: Text[80];
+        Contact: Record Contact;
+        Email1: Text[50];
+        Email: Codeunit Email;
+
+    begin
+        GenJnLine.Reset();
+        GenJnLine.SetRange("Journal Template Name", 'GENERAL');
+        GenJnLine.SetRange("Journal Batch name", 'SEMINAR');
+        GenJnLine.DeleteAll();
+        LineNo := 10;
+
+        //find customer
+        SemRegLine.Reset();
+        SemRegLine.SetRange("Document No.", SeminarRegistrationHeader."No.");
+        if SemRegLine.FindSet() then begin
+            repeat
+                GenJnLine.Init();
+                GenJnLine."Journal Template Name" := 'GENERAL';
+                GenJnLine."Journal Batch Name" := 'SEMINAR';
+                GenJnLine."Line No." := LineNo + 10;
+                GenJnLine."Account Type" := GenJnLine."Account Type"::Customer;
+                GenJnLine."Account No." := SemRegLine."Bill-to Customer No.";
+                GenJnLine.Validate("Account No.");
+                GenJnLine."Posting Date" := Today;
+                GenJnLine."Document No." := SeminarRegistrationHeader."No.";
+                GenJnLine."External Document No." := SeminarRegistrationHeader."No.";
+                GenJnLine.Description := 'Seminar Charges ' + SemRegLine."Participant Contact No.";
+                GenJnLine.Amount := SemRegLine.Amount;
+                GenJnLine.Validate(Amount);
+                GenJnLine."Bal. Account Type" := GenJnLine."Bal. Account Type"::"G/L Account";
+                GenJnLine."Bal. Account No." := '6110';
+                if GenJnLine.Amount <> 0 then
+                    GenJnLine.Insert();
+            until SemRegLine.Next() = 0;
+            Codeunit.Run(Codeunit::"Gen. Jnl.-Post", GenJnLine);
+        end;
+
+        //email
+
+        SemRegLine.Reset();
+        SemRegLine.SetRange("Document No.", SeminarRegistrationHeader."No.");
+        if SemRegLine.FindSet() then begin
+            repeat
+                Contact.Reset();
+                Contact.SetRange("No.", SemRegLine."Participant Contact No.");
+                if Contact.Findset then
+                    message('%1', contact."No.");
+                Email1 := Contact."E-Mail";
+                EmailBody := 'Dear Participant Please Find attached Email';
+                SMTP.Create(Email1, 'Seminar Registration', EmailBody, true);
+                Email.Send(SMTP, Enum::"Email Scenario"::Default);
+            until SemRegLine.Next() = 0;
+            Message('Email Notificattion Send');
+
+        end;
+        SeminarRegistrationHeader.Posted := true;
+        SeminarRegistrationHeader.Modify(true);
+
+
+    end;
 
 }

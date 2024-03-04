@@ -16,6 +16,7 @@ table 50001 SeminarLedgerEntry
         {
             Caption = 'Seminar No.';
             DataClassification = CustomerContent;
+            TableRelation = Seminar;
         }
         field(3; "Posting Date"; Date)
         {

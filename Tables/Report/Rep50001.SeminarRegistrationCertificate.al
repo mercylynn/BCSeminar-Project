@@ -42,6 +42,7 @@ report 50005 SeminarRegistrationCertificate
             {
                 DataItemLink = "Document No." = field("No.");
                 DataItemTableView = sorting("Document No.", "Line No.") order(ascending);
+
                 column(Bill_to_Customer_No_; "Bill-to Customer No.")
                 {
 
