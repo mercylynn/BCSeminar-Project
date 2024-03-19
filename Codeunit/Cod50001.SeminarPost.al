@@ -283,12 +283,15 @@ codeunit 50001 SeminarPost
         GenJnLine: Record "Gen. Journal Line";
         LineNo: Integer;
         SemRegLine: Record SeminarRegistrationLine;
-        EmailBody: Text[80];
+        EmailBody: Text[500];
         Contact: Record Contact;
         Email1: Text[50];
         Email: Codeunit Email;
+        CompanyInformation: Record "Company Information";
+
 
     begin
+
         GenJnLine.Reset();
         GenJnLine.SetRange("Journal Template Name", 'GENERAL');
         GenJnLine.SetRange("Journal Batch name", 'SEMINAR');
@@ -303,18 +306,18 @@ codeunit 50001 SeminarPost
                 GenJnLine.Init();
                 GenJnLine."Journal Template Name" := 'GENERAL';
                 GenJnLine."Journal Batch Name" := 'SEMINAR';
-                GenJnLine."Line No." := LineNo + 10;
+                GenJnLine."Line No." := GenJnLine."Line No." + 10;
                 GenJnLine."Account Type" := GenJnLine."Account Type"::Customer;
                 GenJnLine."Account No." := SemRegLine."Bill-to Customer No.";
                 GenJnLine.Validate("Account No.");
                 GenJnLine."Posting Date" := Today;
                 GenJnLine."Document No." := SeminarRegistrationHeader."No.";
                 GenJnLine."External Document No." := SeminarRegistrationHeader."No.";
-                GenJnLine.Description := 'Seminar Charges ' + SemRegLine."Participant Contact No.";
+                GenJnLine.Description := 'Seminar Charges ' + '' + SemRegLine."Participant Contact No.";
                 GenJnLine.Amount := SemRegLine.Amount;
                 GenJnLine.Validate(Amount);
                 GenJnLine."Bal. Account Type" := GenJnLine."Bal. Account Type"::"G/L Account";
-                GenJnLine."Bal. Account No." := '6110';
+                GenJnLine."Bal. Account No." := '6820';
                 if GenJnLine.Amount <> 0 then
                     GenJnLine.Insert();
             until SemRegLine.Next() = 0;
@@ -332,7 +335,20 @@ codeunit 50001 SeminarPost
                 if Contact.Findset then
                     message('%1', contact."No.");
                 Email1 := Contact."E-Mail";
-                EmailBody := 'Dear Participant Please Find attached Email';
+                //EmailBody := 'Dear Participant Please Find attached Email';
+
+                EmailBody := 'Dear' + ' ' + '<b>' + Contact.Name + ',' + '</b><br>';
+                EmailBody := EmailBody + ' ' + 'You have been registered for ' + SeminarRegistrationHeader."Seminar Name" + 'Seminar' + '<br>';
+                EmailBody := EmailBody + ' ' + 'On Date' + ' ' + Format(SeminarRegistrationHeader."Starting Date") + 'For' + ' ' + Format(SeminarRegistrationHeader.Duration) + 'Hours' + '<br>';
+                EmailBody := 'NB: This is a system generated Email. You do not need to respond to it. in case of any further clarifications or help, kindly contact us through seminaracademy.co.ke' + '<br>';
+
+
+                CompanyInformation.Get();
+                EmailBody := EmailBody + 'Kind regards,' +
+                 '<b></br>' + CompanyInformation.Name + '</b></br>' + CompanyInformation.Address + '</br>' +
+                 CompanyInformation.City + '</br>' + CompanyInformation."Post Code" + '</br>' +
+                 CompanyInformation."Country/Region Code" + '</br>' + CompanyInformation."Phone No." + '</br>' +
+                 CompanyInformation."E-Mail";
                 SMTP.Create(Email1, 'Seminar Registration', EmailBody, true);
                 Email.Send(SMTP, Enum::"Email Scenario"::Default);
             until SemRegLine.Next() = 0;
@@ -344,5 +360,65 @@ codeunit 50001 SeminarPost
 
 
     end;
+
+    procedure SendEmailWithAttachment(SeminarRegistrationHeader: Record SeminarRegistrationHeader)
+    var
+        ReportExample: Report SeminarRegistrationCertificate;
+        Email: Codeunit Email;
+        EmailMessage: Codeunit "Email Message";
+        TempBlob: Codeunit "Temp Blob";
+        InStr: Instream;
+        OutStr: OutStream;
+        ReportParameters: Text;
+        SemHeader: Record SeminarRegistrationHeader;
+        SemLine: Record SeminarRegistrationLine;
+        Contact: Record Contact;
+        Email2: Text[80];
+        RecRef: RecordRef;
+
+    begin
+        //xReportParameters := ReportExample.RunRequestPage();
+        // SemHeader.Reset();
+        // SemHeader.SetRange("No.", SeminarRegistrationHeader."No.");
+        // if SemHeader.FindFirst() then begin
+        //     RecRef.GetTable(SemHeader);
+        //     Message('%1', SemHeader."No.");
+        SemLine.Reset();
+        SemLine.SetRange("Document No.", SemHeader."No.");
+        SemLine.SetRange("Line No.", SemLine."Line No.");
+        Message('%1', SeminarRegistrationHeader."No.");
+        if SemLine.FindSet() then
+            repeat
+            until SemLine.Next() = 0;
+        Message('%1', SemLine."Line No.");
+        SemLine.FindSet();
+        if SemLine.FindSet() then begin
+            repeat
+                Contact.Reset();
+                Contact.SetRange("No.", SemLine."Participant Contact No.");
+                if Contact.Findset then
+                    Email2 := Contact."E-Mail";
+                Message('%1', SemLine."Participant Contact No.");
+
+
+                EmailMessage.Create('mercylynkay@gmail.com', 'Certificate Of Participation', 'Please find the Attached Certificate');
+                RecRef.GetTable(SemLine);
+                TempBlob.CreateOutStream(OutStr);
+                Report.SaveAs(Report::SeminarRegistrationCertificate, '', ReportFormat::Pdf, OutStr, RecRef);
+                TempBlob.CreateInStream(InStr);
+                EmailMessage.AddAttachment('Certificate.pdf', 'PDF', InStr);
+                Email.Send(EmailMessage, Enum::"Email Scenario"::Default);
+            until SemLine.Next() = 0;
+            Message('Email Send');
+        end;
+
+
+        //end;
+
+
+    end;
+
+
+
 
 }

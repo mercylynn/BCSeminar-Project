@@ -6,6 +6,7 @@ page 50060 SeminarRegistration
     Caption = 'Seminar Registration';
     PageType = Document;
     SourceTable = SeminarRegistrationHeader;
+    SourceTableView = where(Posted = filter(false));
     RefreshOnActivate = true;
     PromotedActionCategories = 'New,Process,Report,Request Approval,Approvals,';
 
@@ -258,7 +259,7 @@ page 50060 SeminarRegistration
                     var
                         SeminarPost: Codeunit SeminarPost;
                     begin
-                        // Rec.TestField(Status, Rec.Status::Approved);
+                        Rec.TestField(Status, Rec.Status::Approved);
                         if Confirm('Are you sure you want to post') = true then begin
 
                             SeminarPost.postSeminar(Rec);

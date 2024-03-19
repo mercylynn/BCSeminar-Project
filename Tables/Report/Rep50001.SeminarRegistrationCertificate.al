@@ -25,6 +25,10 @@ report 50005 SeminarRegistrationCertificate
             column(StartingDate; "Starting Date")
             {
             }
+            column(Duration; Duration)
+            {
+
+            }
             column(Picture; CompanyInfo.Picture)
             {
 
@@ -37,11 +41,16 @@ report 50005 SeminarRegistrationCertificate
             {
 
             }
+            column(Email; CompanyInfo."E-Mail")
+            {
 
-            dataitem(PostedSeminarRegLine; PostedSeminarRegLine)
+            }
+
+            dataitem(SeminarRegistrationLine; SeminarRegistrationLine)
             {
                 DataItemLink = "Document No." = field("No.");
                 DataItemTableView = sorting("Document No.", "Line No.") order(ascending);
+                RequestFilterFields = "Participant Contact No.";
 
                 column(Bill_to_Customer_No_; "Bill-to Customer No.")
                 {

@@ -50,10 +50,10 @@ codeunit 50008 CApprovals
         WorkFlowEventHandling: Codeunit "Workflow Event Handling";
     begin
 
-        // WorkFlowEventHandling.AddEventToLibrary(
-        // RunWorkflowOnSendSeminarListForApprovalCode, Database::SeminarRegistrationHeader, OnSendSeminarApprovalRequestTxt, 0, false);
-        // WorkFlowEventHandling.AddEventToLibrary(
-        // RunWorkflowOnCancelSemForApprovalCode, Database::SeminarRegistrationHeader, OnCancelSeminarApprovalRequestTxt, 0, false);
+        WorkFlowEventHandling.AddEventToLibrary(
+        RunWorkflowOnSendSeminarListForApprovalCode, Database::SeminarRegistrationHeader, OnSendSeminarApprovalRequestTxt, 0, false);
+        WorkFlowEventHandling.AddEventToLibrary(
+        RunWorkflowOnCancelSemForApprovalCode, Database::SeminarRegistrationHeader, OnCancelSeminarApprovalRequestTxt, 0, false);
 
     end;
 

@@ -108,16 +108,16 @@ page 50008 SeminarCard
             group("&Seminar")
             {
                 Caption = '&Seminar';
-                action("Ledger E&ntries")
-                {
-                    Caption = 'Ledger E&ntries';
-                    ApplicationArea = All;
-                    Image = WarrantyLedger;
-                    Promoted = true;
-                    PromotedCategory = Process;
-                    RunObject = page SeminarLedgerEntries;
-                    RunPageLink = "Seminar No." = field("No.");
-                }
+                // action("Ledger E&ntries")
+                // {
+                //     Caption = 'st E&ntries';
+                //     ApplicationArea = All;
+                //     Image = WarrantyLedger;
+                //     Promoted = true;
+                //     PromotedCategory = Process;
+                //     RunObject = page "General Ledger Entries";
+                //     RunPageLink = "Document No." = field("No.");
+                // }
                 action("C&omments")
                 {
                     Caption = 'C&omments';

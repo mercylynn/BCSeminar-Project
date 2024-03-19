@@ -1,39 +1,31 @@
-report 50000 RegParticipants
+report 50041 "Instructor Seminars"
 {
     ApplicationArea = All;
-    Caption = 'RegParticipants';
+    Caption = 'Instructor Seminars';
     UsageCategory = ReportsAndAnalysis;
     DefaultLayout = RDLC;
-    RDLCLayout = './Layouts/Participants.rdlc';
+    RDLCLayout = './Layouts/instructorseminars.rdlc';
     dataset
     {
-        dataitem(PostedSeminarRegHeader; SeminarRegistrationHeader)
+        dataitem(SeminarRegistrationHeader; SeminarRegistrationHeader)
         {
-            RequestFilterFields = "No.", "Seminar No.";
-
+            RequestFilterFields = "Instructor Resource No.";
+            column(InstructorResourceNo; "Instructor Resource No.")
+            {
+            }
             column(InstructorName; "Instructor Name")
+            {
+            }
+            column(RoomResourceNo; "Room Resource No.")
+            {
+            }
+            column(RoomName; "Room Name")
             {
             }
             column(SeminarName; "Seminar Name")
             {
             }
-            column(No_; "No.")
-            {
-
-            }
-            column(Seminar_No_; "Seminar No.")
-            {
-
-            }
-            column(Starting_Date; "Starting Date")
-            {
-
-            }
-            column(Duration; Duration)
-            {
-
-            }
-            column(RoomName; "Room Name")
+            column(SeminarNo; "Seminar No.")
             {
             }
             column(Picture; CompanyInfo.Picture)
@@ -66,21 +58,16 @@ report 50000 RegParticipants
             {
 
             }
-
-            dataitem(PostedSeminarRegLine; SeminarRegistrationLine)
+            dataitem(Resource; Resource)
             {
-                DataItemLink = "Document No." = field("No.");
-                DataItemTableView = sorting("Document No.", "Line No.") order(ascending);
-
-                column(Bill_to_Customer_No_; "Bill-to Customer No.")
+                DataItemLink = "No." = field("Instructor Resource No.");
+                DataItemTableView = sorting("No.") order(ascending);
+                // RequestFilterHeading = "No.";
+                column(No_; "No.")
                 {
 
                 }
-                column(Participant_Contact_No_; "Participant Contact No.")
-                {
-
-                }
-                column(Participant_Name; "Participant Name")
+                column(Job_Title; "Job Title")
                 {
 
                 }
@@ -90,24 +77,11 @@ report 50000 RegParticipants
                     CompanyInfo.Get;
                     CompanyInfo.CalcFields(Picture);
                 end;
-
-                trigger OnPreDataItem()
-                var
-                    myInt: Integer;
-                begin
-                    If ("Participant Name" = '') then
-                        exit;
-                end;
             }
-
         }
 
+
     }
-
-
-
-
-
     requestpage
     {
         layout
@@ -128,7 +102,4 @@ report 50000 RegParticipants
     }
     var
         CompanyInfo: Record "Company Information";
-        NoPrinted: Codeunit SeminarRegPrinted;
-
-
 }

@@ -31,28 +31,11 @@ table 50060 SeminarRegistrationHeader
                 "Starting Date" := SetDateTime("Starting Date");
             end;
 
-            // trigger OnValidate()
-            // begin
-            //     if "Starting Date" <> xRec."Starting Date" then
-            //         TestField(Status, Status::Planning);
-            //     begin
-            //         "Ending Date" := CalcDate('+' + Format(Duration), "Starting Date");
-            //         Validate("Ending Date");
-            //     end;
-            // end;
-
-            // trigger OnValidate()
-            // begin
-            //     // Check if the "End Time" field is blank
-            //     if "Starting Date" <> 0DT THEN begin
-
-            //     end;
-            // end;
             trigger OnValidate()
             var
             begin
                 // Calculate end time only if starting date and duration are provided
-                if ("Starting Date" <> 0DT) AND (Duration > 0) THEN begin
+                if ("Starting Date" <> 0DT) AND ("Seminar No." <> '') THEN begin
                     MESSAGE('Starting Date: ' + FORMAT("Starting Date"));
                     MESSAGE('Duration: ' + FORMAT(Duration));
 

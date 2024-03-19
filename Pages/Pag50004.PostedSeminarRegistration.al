@@ -2,7 +2,8 @@ page 50004 PostedSeminarRegistration
 {
     Caption = 'Posted Seminar Registration';
     PageType = Document;
-    SourceTable = PostedSeminarRegHeader;
+    //SourceTable = PostedSeminarRegHeader;
+    SourceTable = SeminarRegistrationHeader;
     Editable = false;
 
     layout
@@ -64,7 +65,9 @@ page 50004 PostedSeminarRegistration
                     ApplicationArea = All;
                 }
             }
-            part(SeminarRegistrationLines; PostedSeminarRegSubform)
+            // part(SeminarRegistrationLines; PostedSeminarRegSubform)
+            part(SeminarRegistrationLines; SeminarRegistrationSubform)
+
             {
                 SubPageLink = "Document No." = field("No.");
                 ApplicationArea = All;
@@ -167,14 +170,14 @@ page 50004 PostedSeminarRegistration
                     RunPageLink = "No." = field("No.");
                     RunPageView = where("Document Type" = const("Posted Seminar Registration"));
                 }
-                action("&Charges")
-                {
-                    ApplicationArea = All;
-                    Caption = '&Charges';
-                    Image = Cost;
-                    RunObject = page SeminarCharges;
-                    RunPageLink = "Document No." = field("No.");
-                }
+                // action("&Charges")
+                // {
+                //     ApplicationArea = All;
+                //     Caption = '&Charges';
+                //     Image = Cost;
+                //     RunObject = page SeminarCharges;
+                //     RunPageLink = "Document No." = field("No.");
+                // }
             }
         }
         area(Processing)
@@ -204,8 +207,45 @@ page 50004 PostedSeminarRegistration
                     Report.Run(50000, true, true, Rec);
                 end;
             }
+            action("Print Certificate")
+            {
+                ApplicationArea = Basic;
+                Image = Print;
+                Promoted = true;
+
+                trigger OnAction()
+                begin
+                    Rec.SetRange("No.", Rec."No.");
+                    Report.Run(50005, true, true, Rec);
+                end;
+            }
+            action("Send Email")
+            {
+                ApplicationArea = Basic, Suite;
+                Caption = 'Send Email';
+                Image = Email;
+                ToolTip = 'Send email to this customer.';
+
+                trigger OnAction()
+                var
+                    SeminarPost: Codeunit SeminarPost;
+                    Email: Codeunit EmailNotification;
+                    SemLine: Record SeminarRegistrationLine;
+
+                begin
+                    Email.SendEmailWithAttachment(Rec);
+                    ;
+                end;
+            }
+
+
         }
     }
     var
         Navigate: Page Navigate;
+
+
+
+
+
 }

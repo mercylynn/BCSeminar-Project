@@ -290,17 +290,50 @@ page 50006 "Seminar Manager Role Center"
                         RunObject = Report RegParticipants;
                         ToolTip = 'View Participants report ';
                     }
-                    // action("Certificate")
-                    // {
-                    //     ApplicationArea = Basic, Suite;
-                    //     Caption = 'Income Statement';
-                    //     Image = "Report";
-                    //     Promoted = true;
-                    //     PromotedCategory = "Report";
-                    //     PromotedIsBig = true;
-                    //     RunObject = Report ;
-                    //     ToolTip = 'View a report that shows your company''s income and expenses.';
-                    // } 
+                    action("SeminarList")
+                    {
+                        ApplicationArea = Basic, Suite;
+                        Caption = 'Seminar List';
+                        Image = "Report";
+                        Promoted = true;
+                        PromotedCategory = "Report";
+                        PromotedIsBig = true;
+                        RunObject = Report SeminarList;
+                        ToolTip = 'View a report that shows your company''s income and expenses.';
+                    }
+                    action("SeminarSummary")
+                    {
+                        ApplicationArea = Basic, Suite;
+                        Caption = 'Seminar Registration summary';
+                        Image = "Report";
+                        Promoted = true;
+                        PromotedCategory = "Report";
+                        PromotedIsBig = true;
+                        RunObject = Report "Summary Report";
+                        ToolTip = 'View a report that shows your company''s income and expenses.';
+                    }
+                    action("Revenue")
+                    {
+                        ApplicationArea = Basic, Suite;
+                        Caption = 'Revenue';
+                        Image = "Report";
+                        Promoted = true;
+                        PromotedCategory = "Report";
+                        PromotedIsBig = true;
+                        RunObject = Report Revenues;
+                        ToolTip = 'View a report that shows your company''s income and expenses.';
+                    }
+                    action("Instructor Seminars")
+                    {
+                        ApplicationArea = Basic, Suite;
+                        Caption = 'Instructor Seminars';
+                        Image = "Report";
+                        Promoted = true;
+                        PromotedCategory = "Report";
+                        PromotedIsBig = true;
+                        RunObject = Report "Instructor Seminars";
+                        ToolTip = 'View a report that shows your company''s income and expenses.';
+                    }
                 }
 
             }
